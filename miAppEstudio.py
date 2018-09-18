@@ -1,6 +1,12 @@
 import os
 
 class products():
+    
+    plataforma = sys.platform
+    if plataforma.startswith('linux'):
+        limpia = "clear"
+    elif plataforma.startswith('win'):
+        limpia = "cls"
 
     productos = [
     {'nombre':'arroz','cantidad':0,'vlrCompra':100,'vlrVenta':1000},
@@ -19,11 +25,11 @@ class products():
             print('Salir------------------0')
             
             op = input('Elija una opcion: \n')
-            os.system('clear')
+            os.system(limpia)
             if(op == '1'):
                 self.agregar()
                 
-                os.system('clear')
+                os.system(limpia)
             elif(op == '2'):
                 self.listar()
             elif(op == '3'):
@@ -46,7 +52,7 @@ class products():
         for x in self.productos:
             print('producto: %s cantidad: %i' %(x['nombre'],x['cantidad']))
         input('presione enter para continuar')
-        os.system('clear')
+        os.system(limpia)
         
     def comprar (self):
         op = 's'
@@ -62,12 +68,12 @@ class products():
                 print('total a pagar: %d' %total)
                 carritoCompra.append({'nombre':nom,'cantidad': cant, 'vlrCompra':vlrCompra})
                 op = input('presione s para seguir comprando, \ng para finalizar compra, o \nx para cancelar compra. ')
-                os.system('clear')
+                os.system(limpia)
             
             else: 
                 print('producto no existe')
                 input('enter para continuar')
-                os.system('clear')
+                os.system(limpia)
         if(op == 'g'):
             for x in carritoCompra:
                 indice = self.buscar(x['nombre'])
@@ -86,18 +92,18 @@ class products():
                 if(cant == 0 or cant > self.productos[indice]['cantidad']):
                 	    op = input('No hay suficientes existencias en inventario.\npresione s para seguir vendiendo n para dalir al menu.')
                 	        	    
-                	    os.system('clear')
+                	    os.system(limpia)
                 else:
                     total += int(cant) * int(self.productos[indice]['vlrVenta'])
                     print('total a pagar: %d' %total)
                     carritoCompra.append({'nombre':nom,'cantidad': cant})
                     op = input('presione s para seguir vendiendo, \nx para finalizar venta, o \nx para cancelar venta. ')
-                    os.system('clear')
+                    os.system(limpia)
             
             else: 
                 print('producto no existe')
                 input('enter para continuar')
-                os.system('clear')
+                os.system(limpia)
         if(op == 'g'):
             for x in carritoCompra:
                 indice = self.buscar(x['nombre'])
@@ -113,5 +119,5 @@ class products():
         return indice
         
 miApp = products()
-os.system('clear')
+os.system(limpia)
 miApp.menu()

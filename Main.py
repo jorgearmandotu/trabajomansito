@@ -1,55 +1,127 @@
 import os
-class Menu():
-    productos = [
-        {'nombre':'arroz','cantidad':20,'valorCompra':23000,'vrVenta':45000},
-        {'nombre':'Aceite','cantidad':10,'valorCompra':10000,'vrVenta':30000},
-        {'nombre':'Papa','cantidad':15,'valorCompra':15000,'vrVenta':50000},
-        {'nombre':'Frijol','cantidad':80,'valorCompra':30000,'vrVenta':20000},
-        {'nombre':'Maiz','cantidad':120,'valorCompra':20000,'vrVenta':15000},
-        ]
-    productoSeleccionado = ''
-    
-    def presentacion(self):
-        os.system('cls')
-        print('********************************')
-        print('********MENU DE OPCIONES********')
-        print('********************************')
-        print('GESTION PRODUCTOS..............1')
-        print('GESTION DE INVENTARIO..........2')
-        print('COMPRAS........................3')
-        print('VENTAS.........................4')
-        print('SALIR..........................0')
-    
-    def opciones(self):
-        self.presentacion()
-        opcion = int(input('Digite una opcion: '))
-        while(opcion != 0):
-            if (opcion >= 0 and opcion < 5):
-                if(opcion == 1):
-                    self.gestionProductos()
-                if(opcion == 2):
-                    self.gestionInventario()
-                if(opcion == 3):
-                    self.compras()
-                if(opcion == 4):
-                    self.ventas()
-            else:
-                self.opciones()
-                
-    
-    def gestionProductos(self):
-        print('********************************')
-        print('******GESTION DE PRODUCTOS******')
-        print('********************************')
-        #aqui voy a tener que hacer algo :)
+import sys
 
-        print("Nombre----Cantidad----ValorCompra----ValorVenta\n")
+class products():
+    
+    
+        
+    productos = [
+    {'nombre':'arroz','cantidad':0,'vlrCompra':100,'vlrVenta':1000},
+    {'nombre':'papa','cantidad':0,'vlrCompra':10,'vlrVenta':100},
+    ]
+
+    def limpiar(self):
+        plataforma = sys.platform
+        if plataforma.startswith('linux'):
+            os.system('clear')
+        elif plataforma.startswith('win'):
+            os.system('cls')
+            
+    def menu(self):
+        self.limpiar()
+        op = None
+        while(op != '0'):
+            print('********* Menu *********')
+            print('Agregar productos------1')
+            print('listar productos-------2')
+            print('Comprar productos------3')
+            print('Venta de productos-----4')
+            print('self.limpiar pantalla-------5')
+            print('Salir------------------0')
+            
+            op = input('Elija una opcion: \n')
+            self.limpiar()
+            if(op == '1'):
+                self.agregar()
+                
+                self.limpiar()
+            elif(op == '2'):
+                self.listar()
+            elif(op == '3'):
+                self.comprar()
+            elif(op == '4'):
+                self.ventas()
+            
+    def agregar(self):
+        print('**** Agregar Producto ****')
+        nom = input('ingrese nombre producto: ')
+        cantidad = input('ingrese cantidad de '+nom+': ')
+        vlrCompra = input('ingrese valor de compra del producto: ')
+        vlrVenta = input('ingrese valor de Venta del producto: ')
+        product = {'nombre':nom,'cantidad': int(cantidad), 'vlrCompra':int(vlrCompra),
+                'vlrVenta':int(vlrVenta)}
+        self.productos.append(product)
+        input('producto agregado')
+    
+    def listar(self):
         for x in self.productos:
-            print(str(x['nombre'])+"----"+str(x['cantidad'])
-                  +"----"+str(x['valorCompra'])+"----"+str(x['vrVenta']))
+            print('producto: %s cantidad: %i' %(x['nombre'],x['cantidad']))
+        input('presione enter para continuar')
+        self.limpiar()
         
-        input('PRESIONE UNA TECLA PARA CONTINUAR')
-        self.opciones()
-mimenu = Menu()
-mimenu.opciones()
+    def comprar (self):
+        op = 's'
+        total = 0
+        carritoCompra = []
+        while(op == 's'):
+            nom = input('ingrese nombre de producto a comprar: ')
+            indice = self.buscar(nom)
+            if(indice != None):
+                cant = int(input('ingrese cantidad de producto a conprar: '))
+                vlrCompra = int(input('ingrese valor del producto: '))
+                total += cant * vlrCompra
+                print('total a pagar: %d' %total)
+                carritoCompra.append({'nombre':nom,'cantidad': cant, 'vlrCompra':vlrCompra})
+                op = input('presione s para seguir comprando, \ng para finalizar compra, o \nx para cancelar compra. ')
+                self.limpiar()
+            
+            else: 
+                print('producto no existe')
+                input('enter para continuar')
+                self.limpiar()
+        if(op == 'g'):
+            for x in carritoCompra:
+                indice = self.buscar(x['nombre'])
+                self.productos[indice]['cantidad'] += x['cantidad']
+                self.productos[indice]['vlrCompra'] += x['vlrCompra']
+                
+    def ventas(self):
+        op = 's'
+        total = int(0)
+        carritoCompra = []
+        while(op == 's'):
+            nom = input('ingrese nombre de producto a vender: ')
+            indice = self.buscar(nom)
+            if(indice != None):
+                cant = int(input('ingrese cantidad de producto a vender: '))
+                if(cant == 0 or cant > self.productos[indice]['cantidad']):
+                        op = input('No hay suficientes existencias en inventario.\npresione s para seguir vendiendo n para dalir al menu.')
+                                    
+                        #self.limpiar()
+                else:
+                    total += int(cant) * int(self.productos[indice]['vlrVenta'])
+                    print('total a pagar: %d' %total)
+                    carritoCompra.append({'nombre':nom,'cantidad': cant})
+                    op = input('presione s para seguir vendiendo, \ng para finalizar venta, o \nx para cancelar venta. ')
+                    #self.limpiar()
+            
+            else: 
+                print('producto no existe')
+                input('enter para continuar')
+                #self.limpiar()
+        if(op == 'g'):
+            for x in carritoCompra:
+                indice = self.buscar(x['nombre'])
+                self.productos[indice]['cantidad'] -= x['cantidad']
+                
         
+    def buscar(self, nombre):
+        indice = None;
+        for x in self.productos:
+            if(x['nombre'] == nombre):
+                indice = self.productos.index(x)
+                break
+        return indice
+        
+miApp = products()
+miApp.menu()
